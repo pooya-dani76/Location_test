@@ -24,15 +24,16 @@ class _LocPageState extends State<LocPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          GetBuilder<LocController>(builder: (controller) {
-            return FlutterMap(
+      body: GetBuilder<LocController>(builder: (controller) {
+        return Stack(
+          children: [
+            FlutterMap(
               mapController: controller.mapController,
               options: const MapOptions(
                 initialZoom: 3,
                 initialCenter: LatLng(2.0, 5.0),
                 maxZoom: 22,
+                minZoom: 3,
               ),
               children: [
                 TileLayer(
@@ -59,24 +60,28 @@ class _LocPageState extends State<LocPage> with TickerProviderStateMixin {
                   }
                 }
               ],
-            );
-          }),
-          Positioned(
-            bottom: 0,
-            child: Column(
-              children: [
-                InkWell(
-                  onTap: () => animatedMapMove(),
-                  child: Container(
-                      color: Colors.grey,
-                      padding: const EdgeInsets.all(5),
-                      child: const Icon(Icons.my_location_rounded)),
-                ),
-              ],
             ),
-          ),
-        ],
-      ),
+            if (controller.gotPermission != null) ...{
+              if (controller.gotPermission!) ...{
+                Positioned(
+                  bottom: 0,
+                  child: Column(
+                    children: [
+                      InkWell(
+                        onTap: () => animatedMapMove(),
+                        child: Container(
+                            color: Colors.grey,
+                            padding: const EdgeInsets.all(5),
+                            child: const Icon(Icons.my_location_rounded)),
+                      ),
+                    ],
+                  ),
+                ),
+              }
+            }
+          ],
+        );
+      }),
     );
   }
 }
